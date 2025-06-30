@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>Catatan Harian</title>
+  </head>
+  <body>
+    <header>
+<!-- Tombol Install Aplikasi -->
+<button id="install-button" title="Install Aplikasi">
+  <i class="fas fa-download"></i> Install Sekarang
+</button>
+
+      <h1>📔 Catatan Harian</h1>
+    </header>
+
+    <main>
+      <nav class="navbar">
+        <ul>
+          <li><button onclick="showPage('home')"><i class="fas fa-home"></i> Beranda</button></li>
+          <li><button onclick="showPage('add')"><i class="fas fa-plus-circle"></i> Tambah</button></li>
+          <li><button onclick="showPage('settings')"><i class="fas fa-cog"></i> Pengaturan</button></li>
+        </ul>
+      </nav>
+
+      <!-- Halaman Beranda -->
+      <section id="home-page" class="page active">
+        <div class="welcome">📓 <strong>Selamat Datang di Catatan Harian Anda!</strong></div>
+        <input type="text" id="search" placeholder="🔍 Cari catatan..." oninput="searchNotes()" />
+        <section id="notes-list" class="notes-grid"></section>
+      </section>
+
+      <!-- Halaman Tambah -->
+      <section id="add-page" class="page hidden">
+        <h2>📝 Tambah Catatan</h2>
+        <form id="note-form" onsubmit="event.preventDefault(); saveNote(); showPage('home');">
+          <input type="text" id="note-title" placeholder="Judul Catatan" required />
+          <input type="file" id="new-image" accept="image/*">
+          <textarea id="note-content" placeholder="Isi Catatan" required></textarea>
+          <input type="text" id="note-tags" placeholder="Tag (pisahkan dengan koma)" />
+          <div class="form-row">
+            <select id="note-priority">
+              <option value="biasa">📎 Biasa</option>
+              <option value="penting">🚨 Penting</option>
+              <option value="rendah">🔽 Rendah</option>
+            </select>
+            <input type="datetime-local" id="note-reminder" />
+          </div>
+          <button type="submit" class="save-btn"><i class="fas fa-save"></i> Simpan</button>
+        </form>
+      </section>
+
+      <!-- Halaman Pengaturan -->
+      <section id="settings-page" class="page hidden">
+        <h2>⚙️ Pengaturan</h2>
+        <button id="toggle-theme" class="theme-toggle" title="Ganti Tema">
+          <i class="fas fa-moon"></i> / <i class="fas fa-sun"></i>
+        </button>
+        <br /><br />
+        <label for="font-select">Pilih Font:</label>
+        <select id="font-select" onchange="changeFont()">
+          <option value="Poppins">Poppins</option>
+          <option value="Arial">Arial</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Times New Roman">Times New Roman</option>
+        </select>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  
+<script>
+  let deferredPrompt;
+  const installBtn = document.getElementById('install-button');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'block';
+  });
+
+  installBtn.addEventListener('click', () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') {
+          console.log('PWA diinstal.');
+        } else {
+          console.log('Instalasi dibatalkan.');
+        }
+        deferredPrompt = null;
+      });
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+    console.log('Aplikasi berhasil diinstal.');
+  });
+</script>
+
+</body>
+</html>
